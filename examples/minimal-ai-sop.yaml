@@ -1,0 +1,68 @@
+task: research-and-compare
+
+objective: >
+  Produce a source-backed comparison of a set of candidates
+  against explicit user-defined criteria.
+
+inputs:
+  - user_goal
+  - candidates
+  - comparison_criteria
+
+preconditions:
+  - user_goal_is_specific
+  - comparison_criteria_are_defined
+  - candidates_are_identified
+
+steps:
+  - collect_primary_sources
+  - collect_relevant_secondary_sources
+  - extract_facts
+  - normalize_facts_to_common_fields
+  - compare_against_criteria
+  - generate_evidence_table
+  - run_quality_checks
+
+decision_rules:
+  - if: primary_source_is_available
+    then: prefer_primary_source
+  - if: sources_conflict
+    then: flag_conflict_and_preserve_both_claims
+  - if: evidence_is_insufficient
+    then: research_more
+  - if: high_impact_claim_lacks_evidence
+    then: escalate_for_verification
+
+exceptions:
+  - condition: candidate_has_missing_core_data
+    action: mark_unknown_and_do_not_infer
+  - condition: criteria_are_ambiguous
+    action: ask_for_clarification
+
+quality_checks:
+  - every_major_claim_has_source
+  - facts_are_not_mixed_with_opinions
+  - all_candidates_use_the_same_comparison_fields
+  - unknowns_are_explicitly_marked
+  - output_matches_requested_schema
+
+human_checkpoints:
+  - before_high_impact_publication
+  - when_sources_materially_conflict
+
+stop_conditions:
+  - required_evidence_cannot_be_verified
+  - user_goal_remains_ambiguous
+
+output:
+  format: markdown
+  required_sections:
+    - summary
+    - evidence_table
+    - uncertainties
+    - sources
+
+evidence_requirements:
+  - source_url
+  - source_type
+  - claim_supported
